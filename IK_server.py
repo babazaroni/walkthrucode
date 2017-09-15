@@ -139,7 +139,8 @@ def handle_calculate_IK(req):
             R0_3 = T0_1[0:3, 0:3] * T1_2[0:3, 0:3] * T2_3[0:3, 0:3]
             R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3})
 
-            R3_6 = R0_3.inv("LU") * ROT_EE
+#            R3_6 = R0_3.inv("LU") * ROT_EE  # original is "LU"
+            R3_6 = R0_3.transpose() * ROT_EE
 
             # Euler angles from rotation matrix
             # More information can be found in the Euler Angles from a Rotation Matrix section
@@ -166,7 +167,10 @@ def handle_calculate_IK(req):
             joint_trajectory_list.append(joint_trajectory_point)
 
         rospy.loginfo("length of Joint Trajectory List: %s" % len(joint_trajectory_list))
-        return CalculateIKResponse(joint_trajectory_list)
+        print "calculating IK response"
+        IK_response = CalculateIKResponse(joint_trajectory_list)
+        print "returning IK response"
+        return IK_response
 
 
 def IK_server():
